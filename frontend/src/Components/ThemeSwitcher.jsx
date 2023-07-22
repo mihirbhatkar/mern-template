@@ -2,11 +2,18 @@ import { useEffect, useState } from "react";
 import { BsFillSunFill, BsFillMoonFill } from "react-icons/bs";
 
 const ThemeSwitcher = () => {
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState(() => {
+    // Retrieve the theme preference from localStorage on component mount
+    return localStorage.getItem("theme") || "light";
+  });
+
   const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    // Save the theme preference to localStorage when the theme changes
+    localStorage.setItem("theme", newTheme);
   };
-  // initially set the theme and "listen" for changes to apply them to the HTML tag
+  // Apply the theme to the HTML tag whenever the theme state changes
   useEffect(() => {
     document.querySelector("html").setAttribute("data-theme", theme);
   }, [theme]);
@@ -14,10 +21,10 @@ const ThemeSwitcher = () => {
     <label className="swap swap-rotate">
       <input onClick={toggleTheme} type="checkbox" />
       <div className="swap-on">
-        <BsFillMoonFill />
+        {theme === "dark" ? <BsFillMoonFill /> : <BsFillSunFill />}
       </div>
       <div className="swap-off">
-        <BsFillSunFill />
+        {theme === "light" ? <BsFillSunFill /> : <BsFillMoonFill />}
       </div>
     </label>
   );

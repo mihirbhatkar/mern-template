@@ -1,29 +1,22 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useRegisterMutation } from "../Slices/usersApiSlice";
+import { useUpdateMutation } from "../Slices/usersApiSlice";
 import { setCredentials } from "../Slices/authSlices";
 import { toast } from "react-toastify";
 import Loader from "../Components/Loader";
 
-const RegisterPage = () => {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [password, setPassword] = useState("");
-
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
+const ProfilePage = () => {
   const { userInfo } = useSelector((state) => state.auth);
 
-  const [register, { isLoading }] = useRegisterMutation();
+  const [email, setEmail] = useState(userInfo.email);
+  const [name, setName] = useState(userInfo.name);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  useEffect(() => {
-    if (userInfo) {
-      navigate("/");
-    }
-  }, [navigate, userInfo]);
+  const dispatch = useDispatch();
+
+  const [update, { isLoading }] = useUpdateMutation();
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -31,18 +24,19 @@ const RegisterPage = () => {
       toast.error("Passwords do not match");
     } else {
       try {
-        const res = await register({ name, email, password }).unwrap(); // this returns a promise so we unwrap it
+        const res = await update({ name, email, password }).unwrap(); // this returns a promise so we unwrap it
         dispatch(setCredentials({ ...res }));
-        navigate("/");
+        toast.success("Credentials changed successfully.");
       } catch (error) {
         toast.error(error?.data?.message || error.error);
       }
     }
   };
+
   return (
     <div className="flex justify-center items-center flex-col min-h-[var(--min-page-height)] font-bold">
       <div className=" max-w-xs w-3/4 border rounded-xl p-4">
-        <h1 className="text-4xl mb-8">Register here.</h1>
+        <h1 className="text-4xl mb-8">Change credentials.</h1>
         <form
           action=""
           onSubmit={submitHandler}
@@ -50,7 +44,6 @@ const RegisterPage = () => {
         >
           <label htmlFor="name">Name</label>
           <input
-            required
             name="name"
             id="name"
             type="text"
@@ -61,7 +54,6 @@ const RegisterPage = () => {
           />
           <label htmlFor="email">Email</label>
           <input
-            required
             name="email"
             id="email"
             value={email}
@@ -72,26 +64,24 @@ const RegisterPage = () => {
           />
           <label htmlFor="password">Password</label>
           <input
-            required
             name="password"
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             type="password"
-            placeholder="enter password"
+            placeholder="enter new password"
             className="input input-bordered w-full max-w-xs"
           />
           <label htmlFor="confirm" className="text-secondary">
             Confirm Password
           </label>
           <input
-            required
             name="confirm"
             id="confirm"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             type="password"
-            placeholder="confirm password"
+            placeholder="confirm new password"
             className="input input-bordered w-full max-w-xs"
           />
           {isLoading ? (
@@ -100,18 +90,12 @@ const RegisterPage = () => {
             </button>
           ) : (
             <button className="btn btn-primary w-[6rem] mt-2" type="submit">
-              Register!
+              Change
             </button>
           )}
         </form>
-        <h4 className="font-semibold text-sm mt-4">
-          Already have an account? Login{" "}
-          <Link className="text-primary" to={"/login"}>
-            here.
-          </Link>
-        </h4>
       </div>
     </div>
   );
 };
-export default RegisterPage;
+export default ProfilePage;

@@ -73,8 +73,19 @@ const getUserProfile = asyncHandler(async (req, res) => {
 const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
   if (user) {
+    const userWithSameEmail = await User.findOne({ email: req.body.email });
+    if (
+      userWithSameEmail &&
+      userWithSameEmail._id.valueOf() !== user._id.valueOf()
+    ) {
+      console.log(userWithSameEmail._id.valueOf());
+      console.log(user._id.valueOf());
+      res.status(406);
+      throw new Error("This email already exists. Try different one.");
+    }
+
     user.name = req.body.name || user.name;
-    user.email = req.body.email || user.email; // ! ADD FUNCTIONALITY TO CHECK FOR EXISTING EMAILS
+    user.email = req.body.email || user.email;
 
     if (req.body.password) user.password = req.body.password;
 

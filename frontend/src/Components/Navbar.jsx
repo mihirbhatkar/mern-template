@@ -24,8 +24,8 @@ const Navbar = () => {
   return (
     <div className="navbar bg-base-100 font-semibold">
       <div className="flex-1">
-        <Link className="btn btn-ghost normal-case text-xl" to={"/"}>
-          MERN Starter
+        <Link className="btn btn-ghost normal-case text-xl font-bold" to={"/"}>
+          template
         </Link>
       </div>
       <div className="flex-none">

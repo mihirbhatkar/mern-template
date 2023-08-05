@@ -19,4 +19,6 @@ To run this app, just execute `npm install` in the root directory and also the f
 * PORT=5000
 * MONGO_URI=YOUR_MONGODB_CONN_STRING
 * JWT_SECRET=ANY_VALUE_YOU_WANT
+
+
 After this, just execute `npm run dev` in the root directory and both the frontend(port=3000) and backend(port=5000) server will start.
